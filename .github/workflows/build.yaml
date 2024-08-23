@@ -19,7 +19,34 @@ jobs:
         with:
             java-version: '21'
             distribution: 'zulu'
-      - name: Build IKMDEV Code
-        uses: ikmdev/maven-clean-install-build-action@main
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
         with:
-          branch_name: ${{env.BRANCH_NAME}}
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Maven Build
+        if: inputs.branch_name == 'main' || inputs.branch_name == 'master'
+        shell: bash
+        run: |
+          ./mvn clean install -U \
+            --batch-mode \
+            -e \
+            -Dmaven.build.cache.enabled=false \
+            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+            -PcodeQuality
+
+      - name: Maven Build -- Feature Branch
+        if: inputs.branch_name != 'main' && inputs.branch_name != 'master'
+        shell: bash
+        run: |
+          ./mvn clean install -U \
+            --batch-mode \
+            -e \
+            -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
+            -Denforcer.skip=true \
+            -PcodeQuality
