@@ -37,6 +37,7 @@
         <maven-plugin-api.version>3.9.7</maven-plugin-api.version>
         <maven-invoker-plugin.version>3.7.0</maven-invoker-plugin.version>
         <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
+        <maven.install-plugin.version>3.1.2</maven.install-plugin.version>
         <maven-archetype-plugin.version>3.2.1</maven-archetype-plugin.version>
         <maven-archetype-packaging.version>3.1.1</maven-archetype-packaging.version>
         <commons-io.version>2.16.1</commons-io.version>
@@ -45,6 +46,14 @@
         <maven.wrapper-plugin.version>3.2.0</maven.wrapper-plugin.version>
         <maven.dependency-plugin.version>3.8.0</maven.dependency-plugin.version>
         <tinkar-starter-data.version>1.0.0</tinkar-starter-data.version>
+        <maven.gpg-plugin.version>3.1.0</maven.gpg-plugin.version>
+        <maven.enforcer-plugin.version>3.3.0</maven.enforcer-plugin.version>
+        <semver-enforcer-rule.version>0.9.33</semver-enforcer-rule.version>
+        <maven.directory.plugin>1.0</maven.directory.plugin>
+        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
+        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
     </properties>
 
     <licenses>
@@ -53,6 +62,10 @@
             <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
+
+    <scm>
+        <url>http://www.github.com/ikmdev/maven-artifact</url>
+    </scm>
 
     <dependencyManagement>
         <dependencies>
@@ -126,6 +139,21 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven.install-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven.gpg-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${nexus-staging-maven-plugin.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
