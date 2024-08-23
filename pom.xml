@@ -42,18 +42,10 @@
         <maven-archetype-packaging.version>3.1.1</maven-archetype-packaging.version>
         <commons-io.version>2.16.1</commons-io.version>
         <tinkar-core.group.id>dev.ikm.tinkar</tinkar-core.group.id>
-        <tinkar-core.version>1.56.0-SNAPSHOT</tinkar-core.version>
+        <tinkar-core.version>1.56.0</tinkar-core.version>
         <maven.wrapper-plugin.version>3.2.0</maven.wrapper-plugin.version>
         <maven.dependency-plugin.version>3.8.0</maven.dependency-plugin.version>
         <tinkar-starter-data.version>1.0.0</tinkar-starter-data.version>
-        <maven.gpg-plugin.version>3.1.0</maven.gpg-plugin.version>
-        <maven.enforcer-plugin.version>3.3.0</maven.enforcer-plugin.version>
-        <semver-enforcer-rule.version>0.9.33</semver-enforcer-rule.version>
-        <maven.directory.plugin>1.0</maven.directory.plugin>
-        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
-        <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
-        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
-        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
     </properties>
 
     <licenses>
@@ -143,16 +135,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>${maven.install-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>${maven.gpg-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>${nexus-staging-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
