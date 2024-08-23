@@ -43,7 +43,7 @@
         <tinkar-core.group.id>dev.ikm.tinkar</tinkar-core.group.id>
         <tinkar-core.version>1.65.0-SNAPSHOT</tinkar-core.version>
         <maven.wrapper-plugin.version>3.2.0</maven.wrapper-plugin.version>
-        <maven.dependency-plugin.version>3.2.2</maven.dependency-plugin.version>
+        <maven.dependency-plugin.version>3.8.0</maven.dependency-plugin.version>
         <tinkar-starter-data.version>1.0.0</tinkar-starter-data.version>
     </properties>
 
