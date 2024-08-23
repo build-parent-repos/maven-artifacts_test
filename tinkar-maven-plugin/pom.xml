@@ -28,23 +28,28 @@
         <dependency>
             <groupId>${tinkar-core.group.id}</groupId>
             <artifactId>data-ephemeral-provider</artifactId>
+            <version>1.65.0</version>
         </dependency>
         <dependency>
             <groupId>${tinkar-core.group.id}</groupId>
             <artifactId>data-spinedarray-provider</artifactId>
+            <version>1.65.0</version>
         </dependency>
         <!-- Core Tinkar Services        -->
         <dependency>
             <groupId>${tinkar-core.group.id}</groupId>
             <artifactId>search-provider</artifactId>
+            <version>1.65.0</version>
         </dependency>
         <dependency>
             <groupId>${tinkar-core.group.id}</groupId>
             <artifactId>entity-provider</artifactId>
+            <version>1.65.0</version>
         </dependency>
         <dependency>
             <groupId>${tinkar-core.group.id}</groupId>
             <artifactId>executor-provider</artifactId>
+            <version>1.65.0</version>
         </dependency>
     </dependencies>
 
