@@ -139,7 +139,7 @@ jobs:
           git config user.name "ikmdevops"
           git config user.email ${{env.ikmdevops_email}}
           git commit --amend -m 'Release ${{steps.splitCurrentVersion.outputs._0}}'
-          git tag -a ${{steps.splitCurrentVersion.outputs._0}} -m '${{steps.splitCurrentVersion.outputs._0}}' --force
+          git tag -f -a ${{steps.splitCurrentVersion.outputs._0}} -m ' Release ${{steps.splitCurrentVersion.outputs._0}}' --force
 
       - name: Set Dev Version
         shell: bash
