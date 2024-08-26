@@ -12,7 +12,7 @@
     </parent>
 
     <groupId>dev.ikm.maven</groupId>
-    <artifactId>maven-artifacts</artifactId>
+    <artifactId>maven-artifacts_test</artifactId>
     <version>1.12.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -56,7 +56,7 @@
     </licenses>
 
     <scm>
-        <url>http://www.github.com/ikmdev/maven-artifact</url>
+        <url>http://www.github.com/ikmdev/maven-artifacts_test</url>
     </scm>
 
     <dependencyManagement>
