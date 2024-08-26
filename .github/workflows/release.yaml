@@ -6,23 +6,14 @@ run-name: "Releasing ${{ github.event.repository.name }} #${{github.run_number}}
 on:
   workflow_dispatch:
 
-#env:
-#  BRANCH_NAME: ${{github.ref_name}}
-#  TRUNK_BRANCH_NAME: 'main'
-#  ikmdevops_pat: 'PAT TOKEN for IKMDevops User'
-#  ikmdevops_email: 'devops@ikm.dev'
-#  github_token: 'GitHub Token'
-#  gpg_passphrase: 'GPG Passphrase'
-#  gpg_key: 'GPG Key'
-#  ossrh_username: 'OSSRH USERNAME'
-#  ossrh_token: 'OSSRH Token'
+env:
+  BRANCH_NAME: ${{github.ref_name}}
+  TRUNK_BRANCH_NAME: 'main'
 
 jobs:
   release:
     name: Release
     runs-on: ubuntu-24.04
-    permissions:
-      contents: write
     if: github.repository_owner == 'ikmdev'
     steps:
       - name: Verify Branch
@@ -31,174 +22,12 @@ jobs:
           echo "ERROR: Attempting to release from branch ${{env.BRANCH_NAME}}. Release from ${{env.TRUNK_BRANCH_NAME}} branch only"
           exit 1
 
-#      - name: Release IKMDEV Code
-#        uses: ikmdev/maven-release-action@main
-#        with:
-#          ikmdevops_pat: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
-#          github_token: ${{secrets.GITHUB_TOKEN}}
-#          ossrh_username: ${{secrets.OSSRH_TOKEN_USER}}
-#          ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
-#          gpg_key: ${{secrets.GPG_KEY}}
-#          gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
-
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - name: Release IKMDEV Code
+        uses: ikmdev/maven-release-action@main
         with:
-          distribution: 'zulu'
-          java-version: '21'
-          server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_CENTRAL_TOKEN
-          gpg-private-key: ${{ secrets.gpg_key }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
-
-      - name: Extract Version
-        id: get_current_version
-        shell: bash
-        run: |
-          echo "POM_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
-
-      - name: Print Maven POM project version
-        shell: bash
-        run: |
-          echo "version = ${{ steps.get_current_version.outputs.POM_VERSION }}"
-
-      - name: Verify Is SNAPSHOT Version
-        if: ${{ !contains(steps.get_current_version.outputs.POM_VERSION, '-SNAPSHOT')}}
-        shell: bash
-        run: |
-          echo "ERROR: Version is set to incompatible version ${{steps.get_current_version.outputs.POM_VERSION}}. Only SNAPSHOT development versions can be converted to a release version."
-          exit 1
-
-      - name: Split version code
-        uses: xom9ikk/split@v1.1
-        id: splitCurrentVersion
-        with:
-          string: ${{steps.get_current_version.outputs.POM_VERSION}}
-          separator: '-'
-          limit: -1
-
-      - name: Split version code - Separate By .
-        uses: xom9ikk/split@v1.1
-        id: splitVersionMinor
-        with:
-          string: ${{steps.splitCurrentVersion.outputs._0}}
-          separator: .
-          limit: -1
-
-      - name: Increment Snapshot Version
-        id: nextSnapshotVersion
-        shell: bash
-        run: |
-          SnapshotVersion="${{steps.splitVersionMinor.outputs._0}}.$((${{steps.splitVersionMinor.outputs._1}} + 1)).${{steps.splitVersionMinor.outputs._2}}-SNAPSHOT"
-          echo "::set-output name=SnapshotVersion::$SnapshotVersion"
-
-      - name: Print Information
-        shell: bash
-        run: |
-          echo "Release Version -- ${{steps.splitCurrentVersion.outputs._0}}"
-          echo "Snapshot Version -- ${{steps.nextSnapshotVersion.outputs.SnapshotVersion}}"
-
-      - name: Print Versions
-        shell: bash
-        run: |
-          echo "Release Version: ${{steps.splitCurrentVersion.outputs._0}}"
-          echo "Next Snapshot Versin: ${{steps.nextSnapshotVersion.outputs.SnapshotVersion}}"
-          echo "RELEASE ENV -- $RELEASE_VERSION"
-
-      - name: Set Release Version
-        shell: bash
-        run: |
-          ./mvnw \
-          --batch-mode \
-          -U \
-          versions:set \
-          -DnewVersion=${{steps.splitCurrentVersion.outputs._0}} \
-          -DgenerateBackupPoms=false \
-          -Dmaven.build.cache.enabled=false
-
-      - name: Build Release Version
-        shell: bash
-        run: |
-          ./mvnw clean install \
-               --batch-mode \
-               -e \
-               -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-               -PcodeQuality,release-enforcement \
-               -Dmaven.build.cache.enabled=false
-
-      - name: Create tag
-        shell: bash
-        run: |
-          git remote set-url origin https://git:${{secrets.ikmdevops_pat_token}}@github.com/${{github.repository}}.git
-          git pull -p
-          git add .
-          git config user.name "ikmdevops"
-          git config user.email ${{env.ikmdevops_email}}
-          git commit --amend -m 'Release ${{steps.splitCurrentVersion.outputs._0}}'
-          git tag -f -a ${{steps.splitCurrentVersion.outputs._0}} -m ' Release ${{steps.splitCurrentVersion.outputs._0}}' --force
-
-      - name: Set Dev Version
-        shell: bash
-        run: |
-          ./mvnw -B versions:set \
-          -DnewVersion=${{steps.nextSnapshotVersion.outputs.SnapshotVersion}} \
-          -DgenerateBackupPoms=false \
-          --batch-mode
-
-      - name: Commit & Push
-        shell: bash
-        run: |
-          git add .
-          git commit -m 'Set next dev version to ${{steps.nextSnapshotVersion.outputs.SnapshotVersion}}'
-          git push origin HEAD:main
-          git push --tags origin
-
-      - name: Create Release
-        shell: bash
-        id: create_release
-        run: |
-          curl -L \
-           -X POST \
-           -H "Accept: application/vnd.github+json" \
-           -H "Authorization: Bearer ${{secrets.github_token}}" \
-           -H "X-GitHub-Api-Version: 2022-11-28" \
-           https://api.github.com/repos/${{github.repository}}/releases \
-          -d '{"tag_name":"${{steps.splitCurrentVersion.outputs._0}}","name":"Release ${{steps.splitCurrentVersion.outputs._0}}","body":"Release ${{steps.splitCurrentVersion.outputs._0}}","draft":false,"prerelease":false,"generate_release_notes":false}'
-
-      - name: Checkout Code Repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{steps.splitCurrentVersion.outputs._0}}
-
-      - name: Maven Build
-        shell: bash
-        run: |
-          ./mvnw clean install -U \
-           --batch-mode \
-           -e \
-           -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-           -Dmaven.build.cache.enabled=false \
-           -PcodeQuality
-
-      - name: Publish To OSSRH (Maven Central Staging)
-        shell: bash
-        run: |
-          ./mvnw deploy -U\
-              --batch-mode \
-              -e \
-              -U \
-              -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn \
-              -DskipTests \
-              -DskipITs \
-              -DrepositoryId=ossrh \
-              -DrepositoryIdOSSRH='true' \
-              -PstageOSSRH \
-              -Dmaven.build.cache.enabled=false
-        env:
-          MAVEN_USERNAME: ${{ secrets.ossrh_user }}
-          MAVEN_CENTRAL_TOKEN: ${{ secrets.ossrh_pass }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.gpg_passphrase }}
+          ikmdevops_pat: ${{secrets.IKMDEVOPS_PAT_TOKEN}}
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          ossrh_username: ${{secrets.OSSRH_TOKEN_USER}}
+          ossrh_token: ${{secrets.OSSRH_TOKEN_PASS}}
+          gpg_key: ${{secrets.GPG_KEY}}
+          gpg_passphrase: ${{secrets.GPG_PASSPHRASE}}
