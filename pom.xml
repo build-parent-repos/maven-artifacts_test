@@ -46,6 +46,7 @@
         <maven.wrapper-plugin.version>3.2.0</maven.wrapper-plugin.version>
         <maven.dependency-plugin.version>3.8.0</maven.dependency-plugin.version>
         <tinkar-starter-data.version>1.0.0</tinkar-starter-data.version>
+        <nexus-staging.version>1.6.13</nexus-staging.version>
     </properties>
 
     <licenses>
@@ -322,7 +323,7 @@
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.13</version>
+						<version>${nexus-staging.version}</version>
 						<extensions>true</extensions>
 						<configuration>
 							<serverId>ossrh</serverId>
