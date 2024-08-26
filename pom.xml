@@ -319,11 +319,19 @@
 				</repository>
 			</distributionManagement>
 			<build>
+            <pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.sonatype.plugins</groupId>
+						    <artifactId>nexus-staging-maven-plugin</artifactId>
+						    <version>${nexus-staging.version}</version>
+						</plugin>
+					</plugins>
+				</pluginManagement>
 				<plugins>	
 					<plugin>
 						<groupId>org.sonatype.plugins</groupId>
 						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>${nexus-staging.version}</version>
 						<extensions>true</extensions>
 						<configuration>
 							<serverId>ossrh</serverId>
