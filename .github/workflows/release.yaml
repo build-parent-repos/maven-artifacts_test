@@ -133,11 +133,11 @@ jobs:
       - name: Create tag
         shell: bash
         run: |
-          git remote set-url origin https://git:${{secrets.ikmdevops_pat}}@github.com/${{github.repository}}.git
+          git remote set-url origin https://git:${{secrets.ikmdevops_pat_token}}@github.com/${{github.repository}}.git
           git pull -p
           git add .
           git config user.name "ikmdevops"
-          git config user.email ${{secrets.ikmdevops_email}}
+          git config user.email ${{env.ikmdevops_email}}
           git commit --amend -m 'Release ${{steps.splitCurrentVersion.outputs._0}}'
           git tag -a ${{steps.splitCurrentVersion.outputs._0}} -m '${{steps.splitCurrentVersion.outputs._0}}' --force
 
@@ -199,6 +199,6 @@ jobs:
               -PstageOSSRH \
               -Dmaven.build.cache.enabled=false
         env:
-          MAVEN_USERNAME: ${{ secrets.ossrh_username }}
-          MAVEN_CENTRAL_TOKEN: ${{ secrets.ossrh_token }}
+          MAVEN_USERNAME: ${{ secrets.ossrh_user }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.ossrh_pass }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.gpg_passphrase }}
